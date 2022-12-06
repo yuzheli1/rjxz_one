@@ -1,0 +1,68 @@
+https://blog.csdn.net/taoerchun/article/details/93634764
+
+git push失败，报错fatal: does not appear to a git repository Could not read from remote repository
+
+几周没用git，今天一来托管就报错，下面记录一下解决办法。
+
+$ git push -u origin master
+fatal: 'git@github.com/zejun_web' does not appear to be a git repository
+fatal: Could not read from remote repository.
+ 
+Please make sure you have the correct access rights
+and the repository exists.
+ 
+这是报错信息，建立了文件夹用了
+
+git init
+后，也remote了，结果就是push不上去。
+
+后面检查了一下remote内容
+
+$ git remote -v
+origin  git@github.com/zejun_web (fetch)
+origin  git@github.com/zejun_web (push)
+ 
+敢情是remote命令就错了，里面少了git账号:git-ze,应该是：
+
+git remote add origin git@github.com:git-ze/zejun_web.git
+
+这样就知道怎么解决了，
+先remove掉添加在远程的origin
+
+git remote rm origin
+此时再用
+
+git remote -v
+就会发现没有origin了
+
+再正确输入
+
+git remote add origin git@github.com:git-ze/xxxx.git
+就可以了。
+
+然后
+
+$ git push -u origin master
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (7/7), 545 bytes | 272.00 KiB/s, done.
+Total 7 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), done.
+remote:
+remote: Create a pull request for 'master' on GitHub by visiting:
+remote:      https://github.com/git-ze/zejun_web/pull/new/master
+remote:
+To github.com:git-ze/zejun_web.git
+ * [new branch]      master -> master
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+ 
+到这里就成功啦。
+网上查了一下还有的说要重新配置邮箱和姓名等信息的。。如果没有添加公钥的话确实
+还是要先在GitHub上添加公钥，
+如果已经添加过了，可以先用git remote -v命令来检查一下添加的origin是不是代码写错了，写少了。
+如果错了就先 git remote rm origin
+然后最后就可以push了。
+
+要注意的就是第一次push的话，要加上 -u 在语句里，把本地master分支和远程库的master分支关联起来。
